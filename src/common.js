@@ -32,10 +32,7 @@ if (process.env.NODE_ENV !== 'production') {
   console.error = function() {
     error.apply(console, arguments);
     // Show yellow box for the `warning` module.
-    if (typeof arguments[0] === 'string' &&
-        arguments[0].startsWith('Warning: ')) {
-      updateWarningMap.apply(null, arguments);
-    }
+    updateWarningMap.apply(null, arguments);
   };
   console.warn = function() {
     // this is a cheap trick to keep blessed environment from printining
@@ -62,6 +59,9 @@ function sprintf(format, ...args) {
 }
 
 function updateWarningMap(format, ...args): void {
+  const error = new Error();
+  const isError = /console\.error/m.test(error.stack);
+
   const stringifySafe = require('json-stringify-safe');
 
   format = String(format);
@@ -72,7 +72,7 @@ function updateWarningMap(format, ...args): void {
   ].join(' ');
 
   const count = _warningMap.has(warning) ? _warningMap.get(warning) : 0;
-  _warningMap.set(warning, count + 1);
+  _warningMap.set(warning, {count: count + 1, isError});
   _warningEmitter.emit('warning', _warningMap);
 }
 

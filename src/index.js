@@ -9,7 +9,7 @@ import {
   isWarningIgnored,
 } from './common';
 
-const WarningRow = ({count, warning, onClick}) => {
+const WarningRow = ({isError, count, warning, onClick}) => {
   const countText = count > 1 ?
     <span style={styles.listRowCount}>{'(' + count + ') '}</span> :
     null;
@@ -79,6 +79,8 @@ class YellowBox extends Component {
 
   constructor(props: mixed, context: mixed) {
     super(props, context);
+
+    // console.log(_warningMap);
     this.state = {
       inspecting: null,
       warningMap: _warningMap,
@@ -132,7 +134,7 @@ class YellowBox extends Component {
       null;
 
     const rows = [];
-    this.state.warningMap.forEach((count, warning) => {
+    this.state.warningMap.forEach(({count, isError}, warning) => {
       if (!isWarningIgnored(warning)) {
         rows.push(
           <WarningRow
@@ -168,7 +170,7 @@ YellowBox.propTypes = {
   style: PropTypes.object
 };
 
-const backgroundColor = opacity => 'rgba(250, 186, 48, ' + opacity + ')';
+const backgroundColor = opacity => 'rgba(255, 0, 0, ' + opacity + ')';
 const textColor = 'white';
 const rowGutter = 0;
 const rowHeight = 46;
@@ -247,17 +249,15 @@ var styles = {
     backgroundColor: backgroundColor(0.95),
     borderWidth: '1px 0',
     borderStyle: 'solid none',
-    borderTopColor: 'rgba(255, 255, 255, 0.5)',
-    borderBottomColor: 'rgba(250, 186, 48, 1)',
-    height: rowHeight - 2, // for border
-    marginTop: rowGutter,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
+    marginTop: rowGutter
   },
   listRowContent: {
     background: 'transparent',
     border: 0,
-    lineHeight: rowHeight + 'px',
+    height: rowHeight + 'px',
     textAlign: 'left',
-    width: '100%',
+    width: '100%'
   },
   listRowCount: {
     color: 'rgba(255, 255, 255, 0.5)'
